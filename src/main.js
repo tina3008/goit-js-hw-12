@@ -66,7 +66,7 @@ fillForm.addEventListener('submit', async event => {
     return;
   }
 
-  showLoader();
+   showLoader();
 
   try {
     imgset = await fetchImg();
@@ -84,7 +84,8 @@ fillForm.addEventListener('submit', async event => {
     renderImgs(imgset);
   } catch (error) {
     errorShow();
-  } finally {
+  } 
+  finally {
     hideLoader();
     handleLoad();
   }
@@ -104,7 +105,7 @@ addImgs.addEventListener('click', async event => {
     });
   }
   addPage += 1;
-
+  showLoader();
   try {
     imgset = await fetchImg();
 
@@ -116,6 +117,10 @@ addImgs.addEventListener('click', async event => {
 
     renderImgs(imgset);
   } catch (error) {
-    errorShow;
+    errorShow();
+  } finally {
+    hideLoader();
+    handleLoad();
   }
+
 });
