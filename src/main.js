@@ -129,7 +129,7 @@ window.onload = handleLoad;
 // =========================
 
 async function getDomRect() {
-  let imgSize = document.querySelector('.img-blok');
+  const imgSize = document.querySelector('.img-blok');
   const domRect = imgSize.getBoundingClientRect();
   window.scrollBy({
     top: domRect.height * 2,
