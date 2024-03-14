@@ -45,7 +45,7 @@ const handleLoad = () => {
   document.body.classList.add('loaded');
   document.body.classList.remove('loaded_hiding');
 };
-window.onload = handleLoad;
+// window.onload = handleLoad;
 
 // Begin ++++++++++++++++
 fillForm.addEventListener('submit', async event => {
@@ -66,7 +66,7 @@ fillForm.addEventListener('submit', async event => {
     return;
   }
 
-   showLoader();
+  showLoader();
 
   try {
     imgset = await fetchImg();
@@ -82,10 +82,10 @@ fillForm.addEventListener('submit', async event => {
       addImgs.style.display = 'flex';
     }
     renderImgs(imgset);
+    getDomRect();
   } catch (error) {
     errorShow();
-  } 
-  finally {
+  } finally {
     hideLoader();
     handleLoad();
   }
@@ -99,7 +99,7 @@ addImgs.addEventListener('click', async event => {
     addImgs.style.display = 'none';
     iziToast.error({
       color: 'blue',
-  
+
       message: `We're sorry, but you've reached the end of search results.`,
       position: 'topRight',
     });
@@ -116,11 +116,23 @@ addImgs.addEventListener('click', async event => {
     }
 
     renderImgs(imgset);
+    getDomRect();
   } catch (error) {
     errorShow();
   } finally {
     hideLoader();
     handleLoad();
   }
-
 });
+window.onload = handleLoad;
+
+// =========================
+
+async function getDomRect() {
+  let imgSize = document.querySelector('.img-blok');
+  const domRect = imgSize.getBoundingClientRect();
+  window.scrollBy({
+    top: domRect.height * 2,
+    behavior: 'smooth',
+  });
+}
