@@ -11,13 +11,27 @@ export const setGallery = document.querySelector('ul.gallery');
 export let imgset;
 export let searchImgs;
 
+export let addPage = 1;
+
 // +++++++++++++++++++
 
 const inputfield = document.querySelector('input');
-const inputBtn = document.querySelector('button');
+
 const fillForm = document.querySelector('form');
+const addImgs = document.querySelector('#addImg');
 
 const preloader = document.querySelector('.preloader');
+let maxPages;
+
+const errorShow = () => {
+  setGallery.innerHTML = '';
+  iziToast.error({
+    color: 'red',
+
+    message: `❌ Sorry, there are no images matching your search query. Please try again!`,
+    position: 'topRight',
+  });
+};
 
 // loader begin==============
 
@@ -31,13 +45,13 @@ const handleLoad = () => {
   document.body.classList.add('loaded');
   document.body.classList.remove('loaded_hiding');
 };
-
 window.onload = handleLoad;
-// +++++++++++++++++++
+
 // Begin ++++++++++++++++
 fillForm.addEventListener('submit', async event => {
   event.preventDefault();
-
+  addPage = 1;
+  imgset = {};
   searchImgs = inputfield.value.trim();
 
   // control correct fill input
@@ -45,42 +59,63 @@ fillForm.addEventListener('submit', async event => {
   if (!searchImgs.length) {
     iziToast.error({
       color: 'yellow',
-      message: ` Please fill in the field for search query.`,
+      message: ` Please fill in the field for search images.`,
       position: 'topRight',
     });
     setGallery.innerHTML = '';
+    return;
   }
 
-  
   showLoader();
+
   try {
-
-    const images = await fetchImg();
-
-    imgset = images.hits;
+    imgset = await fetchImg();
 
     if (!imgset.length) {
-      iziToast.error({
-        color: 'red',
-  
-        message: `❌ Sorry, there are no images matching your search query. Please try again!`,
-        position: 'topRight',
-      });
+      errorShow();
+      addImgs.style.display = 'none';
+      return;
     }
+    maxPages = Math.ceil(imgset.length);
 
-
-    renderImgs(images);
+    if (maxPages > 1) {
+      addImgs.style.display = 'flex';
+    }
+    renderImgs(imgset);
   } catch (error) {
-    iziToast.error({
-      color: 'red',
-      message: `:x: Sorry, there was a mistake. Please try again!`,
-      position: 'topRight',
-    });
+    errorShow();
   } finally {
     hideLoader();
     handleLoad();
   }
 });
 
+// add pages===============
+addImgs.addEventListener('click', async event => {
+  event.preventDefault();
 
+  if (addPage === maxPages) {
+    addImgs.style.display = 'none';
+    iziToast.error({
+      color: 'blue',
+  
+      message: `We're sorry, but you've reached the end of search results.`,
+      position: 'topRight',
+    });
+  }
+  addPage += 1;
 
+  try {
+    imgset = await fetchImg();
+
+    if (!imgset.length) {
+      errorShow();
+      addImgs.style.display = 'none';
+      return;
+    }
+
+    renderImgs(imgset);
+  } catch (error) {
+    errorShow;
+  }
+});

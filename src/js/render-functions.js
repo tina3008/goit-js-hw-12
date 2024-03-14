@@ -6,8 +6,10 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 import { setGallery } from '../main';
 import { imgset } from '../main';
+import { addPage } from '../main';
+let imgsetAdd = {};
 
-export function renderImgs(images) {
+export async function renderImgs(images) {
   setGallery.innerHTML = '';
 
   const imgGallery = imgset
@@ -40,7 +42,9 @@ export function renderImgs(images) {
     )
     .join('');
 
-  setGallery.insertAdjacentHTML('beforeend', imgGallery);
+  addPage > 1 ? (imgsetAdd += imgGallery) : (imgsetAdd = imgGallery);
+
+  setGallery.insertAdjacentHTML('beforeend', imgsetAdd);
 
   const lightbox = new SimpleLightbox('.gallery a', {
     captionsData: 'alt',
