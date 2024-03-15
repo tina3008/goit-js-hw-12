@@ -82,7 +82,7 @@ fillForm.addEventListener('submit', async event => {
       addImgs.style.display = 'flex';
     }
     renderImgs(imgset);
-    getDomRect();
+    scroll();
   } catch (error) {
     errorShow();
   } finally {
@@ -116,7 +116,7 @@ addImgs.addEventListener('click', async event => {
     }
 
     renderImgs(imgset);
-    getDomRect();
+    scroll();
   } catch (error) {
     errorShow();
   } finally {
@@ -128,7 +128,7 @@ window.onload = handleLoad;
 
 // =========================
 
-async function getDomRect() {
+async function scroll() {
   const imgSize = document.querySelector('.img-blok');
   const domRect = imgSize.getBoundingClientRect();
   window.scrollBy({
