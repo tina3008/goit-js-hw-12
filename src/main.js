@@ -11,27 +11,16 @@ export const setGallery = document.querySelector('ul.gallery');
 export let imgset;
 export let searchImgs;
 
+export const perPage = 15;
 export let addPage = 1;
 
 // +++++++++++++++++++
 
 const inputfield = document.querySelector('input');
-
 const fillForm = document.querySelector('form');
 const addImgs = document.querySelector('#addImg');
 
 const preloader = document.querySelector('.preloader');
-let maxPages;
-
-const errorShow = () => {
-  setGallery.innerHTML = '';
-  iziToast.error({
-    color: 'red',
-
-    message: `❌ Sorry, there are no images matching your search query. Please try again!`,
-    position: 'topRight',
-  });
-};
 
 // loader begin==============
 
@@ -45,7 +34,6 @@ const handleLoad = () => {
   document.body.classList.add('loaded');
   document.body.classList.remove('loaded_hiding');
 };
-// window.onload = handleLoad;
 
 // Begin ++++++++++++++++
 fillForm.addEventListener('submit', async event => {
@@ -72,19 +60,32 @@ fillForm.addEventListener('submit', async event => {
     imgset = await fetchImg();
 
     if (!imgset.length) {
-      errorShow();
+      iziToast.error({
+        color: 'red',
+        message: `❌ Sorry, there are no images matching your search query. Please try again!`,
+        position: 'topRight',
+      });
       addImgs.style.display = 'none';
       return;
     }
-    maxPages = Math.ceil(imgset.length);
 
-    if (maxPages > 1) {
+    if (perPage <= imgset.length) {
       addImgs.style.display = 'flex';
+    } else {
+      iziToast.error({
+        color: 'blue',
+        message: `We're sorry, but you've reached the end of search results.`,
+        position: 'topRight',
+      });
     }
     renderImgs(imgset);
     scroll();
   } catch (error) {
-    errorShow();
+    iziToast.error({
+      color: 'red',
+      message: `❌ Sorry, there are no images matching your search query. Please try again!`,
+      position: 'topRight',
+    });
   } finally {
     hideLoader();
     handleLoad();
@@ -95,30 +96,31 @@ fillForm.addEventListener('submit', async event => {
 addImgs.addEventListener('click', async event => {
   event.preventDefault();
 
-  if (addPage === maxPages) {
-    addImgs.style.display = 'none';
-    iziToast.error({
-      color: 'blue',
-
-      message: `We're sorry, but you've reached the end of search results.`,
-      position: 'topRight',
-    });
-  }
   addPage += 1;
+
   showLoader();
   try {
     imgset = await fetchImg();
 
-    if (!imgset.length) {
-      errorShow();
+    if (perPage > imgset.length) {
+      iziToast.error({
+        color: 'blue',
+        message: `We're sorry, but you've reached the end of search results.`,
+        position: 'topRight',
+      });
       addImgs.style.display = 'none';
       return;
     }
 
     renderImgs(imgset);
     scroll();
+
   } catch (error) {
-    errorShow();
+    iziToast.error({
+      color: 'red',
+      message: `❌ Sorry, there are no images matching your search query. Please try again!`,
+      position: 'topRight',
+    });
   } finally {
     hideLoader();
     handleLoad();

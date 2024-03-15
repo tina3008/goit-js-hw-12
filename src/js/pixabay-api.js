@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { searchImgs } from '../main.js';
 import { addPage } from '../main.js';
+import { perPage } from '../main.js';
 
 export const fetchImg = async () => { 
   const response = await axios.get('https://pixabay.com/api/', {
@@ -10,7 +11,7 @@ export const fetchImg = async () => {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: 'true',
-      per_page: 15,
+      per_page: perPage,
       page: addPage,
     },
   });
